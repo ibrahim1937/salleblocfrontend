@@ -4,6 +4,8 @@ import * as AiIcons from 'react-icons/ai';
 import * as IoIcons from 'react-icons/io';
 import * as SiIcons from 'react-icons/si';
 import * as FcIcons from 'react-icons/fc';
+import * as HiIcons from 'react-icons/hi';
+
 
 export const SidebarData = [
   {
@@ -46,6 +48,12 @@ export const SidebarData = [
     title: 'History',
     path: '/history',
     icon: <FaIcons.FaHistory />,
+    cName: 'nav-text'
+  },
+  {
+    title: 'Logout',
+    path: '/history',
+    icon: <HiIcons.HiOutlineLogout />,
     cName: 'nav-text'
   }
   // {

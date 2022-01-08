@@ -1,4 +1,6 @@
-
+html{
+    scroll-behavior: smooth;
+}
 .myflex {
     display: flex;
     align-items: center;

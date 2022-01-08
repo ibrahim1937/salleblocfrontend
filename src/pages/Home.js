@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Card, Container } from 'react-bootstrap'
 import { endpoint } from '../utils/Constants'
 import socketIOClient from "socket.io-client";
-import { Bar , Pie, Doughnut, Line} from 'react-chartjs-2';
+import { Bar , Pie, Doughnut, Line, getDatasetAtEvent} from 'react-chartjs-2';
 import { getRequest } from '../utils/RequestHelper';
 import "../utils/import"
 import MyChart from '../components/MyChart';
@@ -31,6 +31,10 @@ function Home() {
     // occupation per creneau
     const [data6, setData6] = useState(null);
 
+    // blocs
+    const [blocs, setBlocs] = useState([]);
+    const [availableSalles, setAvailableSalles] = useState(null);
+
     const [change, setChange] = useState(0);
 
 
@@ -53,6 +57,7 @@ function Home() {
     const getData  = async () => {
         var { data } = await getRequest(endpoint + "/api/occupations/perbloc");
         setData(data)
+        setData3(data)
         var { data } = await getRequest(endpoint + "/api/salles/perbloc");
         setData2(data);
         var { data } = await getRequest(endpoint + "/api/stats");
@@ -63,12 +68,19 @@ function Home() {
         setData6(data);
     }
 
-     
+     const getDate = (date = new Date()) => {
+         return `${date.getFullYear()}-${(date.getMonth() + 1 < 10) ? ("0" + (date.getMonth() + 1)) : (date.getMonth() + 1)}-${(date.getDate()  < 10) ? ("0" + date.getDate()) : date.getMonth()}`
+     }
    
 
     useEffect(async () => {
         await getData();
 
+    }, [change])
+
+    useEffect(async () => {
+        const { data } = await getRequest(endpoint + "/api/blocs");
+        setBlocs(data);
     }, [change])
 
     useEffect(() => {
@@ -77,38 +89,7 @@ function Home() {
             console.log("hello from socket")
             await getData()
         });
-    },[])
-
-    // useEffect(async () => {
-
-    //     const { data } = await getRequest(endpoint + "/api/salles/perbloc");
-    //     setData2(data);
-  
-
-    // }, [])  
-    // useEffect(async () => {
-
-    //     const { data } = await getRequest(endpoint + "/api/stats");
-    //     setData4(data);
-
-    // }, [])  
-    // useEffect(async () => {
-    //     let { data } = await getRequest(endpoint + "/api/stats/occupation");
-    //     setData5(data);
-        
-
-    // }, [])  
-    // useEffect(async () => {
-     
-    //     const { data } = await getRequest(endpoint + "/api/stats/creneau");
-    //     setData6(data);
-   
-
-    // }, [])  
-    
-    
-
-   
+    },[])   
 
     const handleDateChange = async (e) => {
         if(e.target.value === ""){
@@ -119,12 +100,26 @@ function Home() {
         setData3(data);
     }
 
+    const handleChange = async (e) => {
+        var id = e.target.value;
+        if(id === ""){
+            setAvailableSalles(null)
+            return;
+        }
+        
+        const { data } = await getRequest(endpoint + "/api/salles/findbybloc/" + id);
+        setAvailableSalles(data);
+    }
+
     document.title = 'Home';
     return (
         <>
             <Container>
                 <div className='row'>
                     <h3 className='text text-center text-primary'>Statistics</h3>
+                    <div className="col col-sm-12 col-lg-3">
+                        <a className="btn btn-success" href='#available'>Salle Availability</a>
+                    </div>
                 </div>
                 
                 <div className='row m-auto w-100'>
@@ -177,7 +172,7 @@ function Home() {
                 <div className='row'>
                     <div className='col col-sm-11 col-lg-6'>
                         {data && (
-                            <MyChart Chart={Bar} height={400} width={600} data={data} label={"Occupations per Salle"} dataOptions={defaultDataOptions} options={getDefaultOptions} />
+                            <MyChart Chart={Bar} height={400} width={600} data={data} label={"Occupations per Bloc"} dataOptions={defaultDataOptions} options={getDefaultOptions} />
                         )}
                     </div>
                     <div className='col col-sm-11 col-lg-6'>
@@ -206,15 +201,42 @@ function Home() {
                         <label htmlFor='date'>Choose the date:</label>
                     </div>
                     <div className="col col-sm-11 col-lg-2 m-1">
-                         <input className='form-control' type={"date"}  id="date" onChange={handleDateChange}/>
+                         <input className='form-control' type={"date"} defaultValue={getDate()}  id="date" onChange={handleDateChange}/>
                     </div>
                 </div>
                 <div className='row'>
                     <div className="col col-sm-11 col-lg-6">
                         {data3 && (
-                                <MyChart Chart={Bar} height={400} width={600} data={data3} label={"Occupations per salle"} dataOptions={defaultDataOptions} options={getDefaultOptions} />
+                                <MyChart Chart={Bar} height={400} width={600} data={data3} label={"Occupations per Bloc"} dataOptions={defaultDataOptions} options={getDefaultOptions} />
                             )}
                     </div>
+                </div>
+                <div className="row">
+                    <h4 className='text text-center text-primary'>Available Salles Per Bloc</h4>
+                </div>
+                <div id="available">
+                    <div className='row m-1'>
+                        <div className='col col-sm-11 col-lg-3 p-1'>
+                            Choose the bloc :
+                        </div>
+                        <div className='col col-sm-11 col-lg-3 p-1'>
+                            <select className='form-select' onChange={handleChange}>
+                                <option value={""}>Select a bloc</option>
+                                {blocs && blocs.map((item,index) => (
+                                    <option key={index} value={item._id}>{item.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div className='row w-100 text-center'>
+                    {availableSalles && availableSalles.map((salle,index) => (
+                        <div className='col col-sm-3 col-lg-1 p-1'>
+                            <button className={salle.isBooked ? "btn btn-danger" : "btn btn-success"}>
+                                {salle.salle.name}
+                            </button>
+                        </div>
+                    ))}
                 </div>
             </Container>
         </>

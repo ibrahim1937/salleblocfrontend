@@ -1,3 +1,3 @@
 
 
-export const endpoint = "https://sallebloc.herokuapp.com"
+export const endpoint = "http://localhost:3001"

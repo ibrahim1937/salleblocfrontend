@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import socketIOClient from "socket.io-client";
 import { MDBDataTable } from 'mdbreact';
 import { toast } from 'react-toastify';
+import { useAuth } from '../context/AuthContext';
 
 function Occupation() {
 
@@ -16,6 +17,8 @@ function Occupation() {
     const handleClose = () => setShow(false);
     const [change, setChange] = useState(0);
     const [toggle, setToggle] = useState(true);
+
+    const { currentUser } = useAuth();
 
     const [creneaux, setCreneaux] = useState(null);
     const [salles, setSalles] = useState(null);
@@ -29,7 +32,10 @@ function Occupation() {
     const handleAdd = async (e) => {
         const date = new Date();
         e.preventDefault();
-        const { data } = await getRequest(endpoint + "/api/occupations/test/" + sallesRef.current.value);
+        const { data } = await postRequest(endpoint + "/api/occupations", {
+            salle : sallesRef.current.value,
+            user : currentUser.id
+        });
 
         if(data){
             if(data.status === "success"){
@@ -94,15 +100,6 @@ function Occupation() {
                 </Modal.Header>
                 <Form>
                     <Modal.Body>
-                    {/* <Form.Group className="mb-3" controlId="formBasicName">
-                        <Form.Label>Creneau:</Form.Label>
-                        <Form.Select aria-label="Default select example" ref={creneauxRef} required>
-                            <option value={""}>Select Creneau</option>
-                            {creneaux && creneaux.map((item) => (
-                                <option key={item._id} value={item._id}>{item.startTime + " - " + item.endTime}</option>
-                            ))}
-                        </Form.Select>
-                    </Form.Group> */}
                     <Form.Group className="mb-3" controlId="formBasicName">
                         <Form.Label>Bloc:</Form.Label>
                         <Form.Select aria-label="Default select example" ref={blocsRef}  onChange={handleBlocChange} required>
@@ -247,6 +244,7 @@ const TableContainer = (props) => {
                     "creneau" : item.creneau.startTime + " - " + item.creneau.endTime,
                     "salle" : item.salle.name,
                     "createdAt" : getDate(item.createdAt),
+                    "user" : `${item.user.firstName} ${item.user.secondName}`,
                     "options" : <TdContainer>
                     <Button className='btn-danger' onClick={() => handleDelete(item)}>Delete</Button>
                     {/* <Button className='btn-primary' onClick={() => handleEdit(item)}>Edit</Button> */}
@@ -276,6 +274,12 @@ const TableContainer = (props) => {
                     {
                         label : "Created At",
                         field : "createdAt",
+                        sort : "asc",
+                        width : 150
+                    },
+                    {
+                        label : "User",
+                        field : "user",
                         sort : "asc",
                         width : 150
                     },

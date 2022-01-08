@@ -33,7 +33,8 @@ function History() {
                 "name" : item.salle.name,
                 "type" : item.salle.type,
                 "creneau" : item.creneau.startTime + " - " + item.creneau.endTime,
-                "createdAt" : getDate(item.createdAt)
+                "createdAt" : getDate(item.createdAt),
+                "user" : `${item.user.firstName} ${item.user.secondName}`
             }
         })
         const mydata = {
@@ -65,6 +66,12 @@ function History() {
                 {
                     label : "Created At",
                     field : "createdAt",
+                    sort : "asc",
+                    width : 150
+                },
+                {
+                    label : "User",
+                    field : "user",
                     sort : "asc",
                     width : 150
                 }
