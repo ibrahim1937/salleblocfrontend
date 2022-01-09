@@ -16,8 +16,9 @@ import { ToastContainer } from "react-toastify"
 import History from './pages/History';
 import SignUp from './pages/SignUp';
 import { AuthProvider } from './context/AuthContext';
-import AuthRoutes from './Routes/AuthRoutes';
-import NotAuthRoutes from './Routes/NotAuthRoutes';
+import AuthRoutes from "./Routes/AuthRoutes";
+import NotAuthRoutes from "./Routes/NotAuthRoutes";
+
 
 function App() {
   return (
@@ -27,21 +28,25 @@ function App() {
           <AuthProvider>
             <ToastContainer />
             <Routes>
-              <Route element={<AuthRoutes />}>
-                <Route path="/" exact element={<Home />} />
-                <Route path="/bloc" exact element={<Bloc />} />
-                <Route path="/salle" exact element={<Salle />} />
-                <Route path="/creneau" exact element={<Creneau />} />
-                <Route path="/occupation" exact element={<Occupation />} />
-                <Route path="/qrcode" exact element={<QrCodePage />} />
-                <Route path="/test" exact element={<DatatablePage />} />
-                <Route path="/history" exact element={<History />} />
-              </Route>
-              <Route element={<NotAuthRoutes />}>
-                <Route path="/signup" exact element={<SignUp />} />
-                <Route path="/login" exact element={<Login />} />
-              </Route>
-            </Routes>
+                <Route element={<AuthRoutes />}>
+                  <Route path="/" exact element={<Home />} />
+                  <Route path="/bloc" exact element={<Bloc />} />
+                  <Route path="/salle" exact element={<Salle />} />
+                  <Route path="/creneau" exact element={<Creneau />} />
+                  <Route path="/occupation" exact element={<Occupation />} />
+                  <Route path="/qrcode" exact element={<QrCodePage />} />
+                  <Route path="/test" exact element={<DatatablePage />} />
+                  <Route path="/history" exact element={<History />} />
+                </Route>
+                <Route element={<NotAuthRoutes />}>
+                  <Route path="/signup" exact element={<SignUp />} />
+                  <Route path="/login" exact element={<Login />} />
+                </Route>
+             
+             
+
+            </Routes>  
+      
             </AuthProvider>
         </Router>
     </>

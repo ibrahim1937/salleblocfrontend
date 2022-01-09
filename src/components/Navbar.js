@@ -30,7 +30,7 @@ function Navbar() {
             <FaIcons.FaBars onClick={showSidebar} />
           </Link>
           <div className='text-light font-weight-bold p-2'>
-            {`Hello, ${currentUser.firstName} ${currentUser.secondName}`}
+            {currentUser && `Hello, ${currentUser.firstName} ${currentUser.secondName}`}
           </div>
         </div>
         <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
