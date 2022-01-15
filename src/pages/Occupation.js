@@ -8,6 +8,7 @@ import socketIOClient from "socket.io-client";
 import { MDBDataTable } from 'mdbreact';
 import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
+import { ExportCSV } from '../utils/ExportCSV';
 
 function Occupation() {
 
@@ -28,6 +29,17 @@ function Occupation() {
     const blocsRef = useRef();
     const sallesRef = useRef();
     const creneauxRef = useRef();
+
+    const getDate = (mydate) => {
+        var d = new Date(mydate);
+       
+        var date = d.getUTCDate();
+        var month = d.getUTCMonth() + 1; // Since getUTCMonth() returns month from 0-11 not 1-12
+        var year = d.getUTCFullYear();
+            
+        var dateStr = date + "/" + month + "/" + year;
+        return dateStr;
+    }
 
     const handleAdd = async (e) => {
         const date = new Date();
@@ -88,11 +100,21 @@ function Occupation() {
     },[])
 
     
+    
 
     return (
         <Container>
             <h1 className="text-center text-info">Occupations</h1>
             <Button className='btn-success m-2' onClick={() => setShow(!show)}>Add Occupation</Button>
+            {occupations && <ExportCSV csvData={occupations.map((item) => {
+                return {
+                    user : item.user.firstName + " " + item.user.secondName,
+                    creneau : item.creneau.startTime + " - " + item.creneau.endTime,
+                    salle : item.salle.name,
+                    salle_type : item.salle.type,
+                    created_date : getDate(item.createdAt)
+                }
+            })} fileName={"occupations"+ new Date().getTime()}/>}
             <TableContainer data={occupations} creneauxData={creneaux} blocsData={blocs} changeState={setChange} changeData={change} />
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>

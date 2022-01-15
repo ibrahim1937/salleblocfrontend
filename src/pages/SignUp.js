@@ -77,7 +77,7 @@ function SignUp() {
                                 <Form.Label>Password Confirmation</Form.Label>
                                 <Form.Control type='password' ref={passwordConfirmRef} required />
                             </Form.Group>
-                            <Button type='submit' className="w-100" onClick={handleSubmit}>Sign Up</Button>
+                            <Button type='submit' style={{ marginTop : "10px"}} className="w-100" onClick={handleSubmit}>Sign Up</Button>
                         </Form>
                     </Card.Body>
                     </Card> 

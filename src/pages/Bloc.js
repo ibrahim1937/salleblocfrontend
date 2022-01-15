@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import swal from 'sweetalert';
 import { MDBDataTable } from 'mdbreact';
 import { toast } from 'react-toastify'
+import { ExportCSV } from '../utils/ExportCSV'
 
 
 function Bloc() {
@@ -50,6 +51,11 @@ function Bloc() {
             <h1 className="text-center text-primary">Gestion des blocs</h1>
 
             <Button className='btn-success m-2' onClick={() => setShow(!show)}>Add A bloc</Button>
+            {blocs && <ExportCSV csvData={blocs.map((item) => {
+                var temp = item;
+                delete temp.__v
+                return temp
+            })} fileName={"blocs" + new Date().getTime()} />}
             <CustomTable data={blocs} changeState={setChange} changeData={change} />
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>

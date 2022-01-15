@@ -4,6 +4,10 @@ import swal from 'sweetalert';
 import { endpoint } from '../utils/Constants';
 import { getRequest } from '../utils/RequestHelper';
 import "../styles/QrStyles.css"
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import $ from 'jquery';
+
 
 function QrCodePage() {
 
@@ -25,6 +29,7 @@ function QrCodePage() {
 
     const blocsRef = useRef();
     const sallesRef = useRef();
+    const contentRef = useRef();
 
 
     const handleBlocChange = async () => {
@@ -46,6 +51,40 @@ function QrCodePage() {
         setWord(sallesRef.current.value);
 
 
+    }
+
+    const download = (e) => {
+       
+        if(salles){
+            var doc = new jsPDF('p', 'pt', 'a4');
+            var pageHeight= doc.internal.pageSize.height;
+            var number = parseInt(100 + 110 * salles.length-1)
+            var result = parseInt(number/parseInt(pageHeight)) + 1
+            var y = 0;
+            var y1 = 0;
+            var index = 0; 
+            for(var i=0; i<salles.length; i++){
+                y = (110 * index ) + 100
+                y1 = (110 * index) + 50
+                if (y>=pageHeight)
+                {
+                    y = 100;
+                    y1 = 50;
+                    index = 1;
+                    doc.addPage();
+                    doc.addImage(`http://api.qrserver.com/v1/create-qr-code/?data=${salles[i].salle._id}&size=${size}x${size}&bgcolor=${bgColor}`, "PNG",0,(y - 100),100,100);
+                    doc.text(150, y1 , salles[i].salle.name)
+                    
+                }else{
+                    index = index +1
+                    doc.addImage(`http://api.qrserver.com/v1/create-qr-code/?data=${salles[i].salle._id}&size=${size}x${size}&bgcolor=${bgColor}`, "PNG",0,(y - 100),100,100);
+                    doc.text(150, y1 , salles[i].salle.name)
+                }
+                
+            }
+            var bloc = blocs.filter((item) => item._id === blocsRef.current.value);
+            doc.save(bloc[0].name + "-" + new Date().getTime() + ".pdf")
+        }
     }
 
     // blocs
@@ -85,8 +124,11 @@ function QrCodePage() {
                         </Form.Select>
                     </Form.Group>
                     <Form.Group>
-                        <button type="submit" className="btn btn-success" onClick={(e) => handleSubmit(e)}>
+                        <button type="submit" className="btn btn-success m-1" onClick={(e) => handleSubmit(e)}>
                             Generate
+                        </button>
+                        <button type='button' className='btn btn-success m-1' onClick={download} disabled={!salles}>
+                            Download 
                         </button>
                     </Form.Group>
             </Form>
@@ -107,9 +149,13 @@ function QrCodePage() {
                 <button  type="button" className='btn btn-success custom-btn'>Download</button>
                 </a>
             </div>
+
+            
+
             
         </Container>
     )
 }
 
 export default QrCodePage
+

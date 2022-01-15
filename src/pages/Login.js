@@ -44,7 +44,7 @@ function Login() {
                                 <Form.Label>Password</Form.Label>
                                 <Form.Control type='password' ref={passwordRef} required />
                             </Form.Group>
-                            <Button type='submit' className="w-100" onClick={handleSubmit}>Sign In</Button>
+                            <Button type='submit' className="w-100" style={{ marginTop : "10px"}} onClick={handleSubmit}>Sign In</Button>
                         </Form>
                     </Card.Body>
                     </Card> 

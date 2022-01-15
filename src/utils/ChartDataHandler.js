@@ -46,9 +46,12 @@ borderWidth: 1 };
 export const getDefaultOptions = () => {
     return {options: {
         scales: {
-            y: {
-                beginAtZero: true
-            }
+            yAxes: [{
+                ticks: {
+                  beginAtZero: true,
+                  min: 0
+                }    
+            }]
         }
     }}
 }

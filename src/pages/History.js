@@ -2,6 +2,7 @@ import { MDBDataTable } from 'mdbreact';
 import React, { useEffect, useState} from 'react'
 import { Container } from 'react-bootstrap'
 import { endpoint } from '../utils/Constants';
+import { ExportCSV } from '../utils/ExportCSV';
 import { getRequest } from '../utils/RequestHelper';
 
 
@@ -83,9 +84,11 @@ function History() {
     return (
         <Container>
             <h1 className="text-center text-info">Occupation History</h1>
+            {tableData && <ExportCSV csvData={tableData.rows} fileName={"occupation_in_" + date} />}
             <div className='form-group'>
                 <label htmlFor='date' className='text text-grey'>Enter the date</label>
                 <input type="date" className='form-control' defaultValue={date} onChange={(e) => setDate(e.target.value) } />
+                
             </div>
             {tableData && (
              <MDBDataTable

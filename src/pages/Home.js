@@ -30,6 +30,7 @@ function Home() {
     const [data5, setData5] = useState(null);
     // occupation per creneau
     const [data6, setData6] = useState(null);
+    const [data7, setData7] = useState(null);
 
     // blocs
     const [blocs, setBlocs] = useState([]);
@@ -66,6 +67,8 @@ function Home() {
         setData5(data);
         var { data } = await getRequest(endpoint + "/api/stats/creneau");
         setData6(data);
+        var { data } = await getRequest(endpoint + "/api/stats/mostbokkedsalles");
+        setData7(data)
     }
 
      const getDate = (date = new Date()) => {
@@ -79,8 +82,14 @@ function Home() {
     }, [change])
 
     useEffect(async () => {
-        const { data } = await getRequest(endpoint + "/api/blocs");
+        var { data } = await getRequest(endpoint + "/api/blocs");
         setBlocs(data);
+
+        if(data.length > 0){
+            var { data } = await getRequest(endpoint + "/api/salles/findbybloc/" + data[0]._id);
+            setAvailableSalles(data);
+        }
+
     }, [change])
 
     useEffect(() => {
@@ -117,10 +126,8 @@ function Home() {
             <Container>
                 <div className='row'>
                     <h3 className='text text-center text-primary'>Statistics</h3>
-                    <div className="col col-sm-12 col-lg-3">
-                        <a className="btn btn-success" href='#available'>Salle Availability</a>
-                    </div>
                 </div>
+            
                 
                 <div className='row m-auto w-100'>
                     <div className='col-11 col-sm-6 col-lg-3 p-1'>
@@ -169,10 +176,36 @@ function Home() {
                     </div>
                     
                 </div>
+
+                <div id="available">
+                    <div className='row m-1'>
+                        <div className='col col-sm-11 col-lg-3 p-1'>
+                            Choose the bloc :
+                        </div>
+                        <div className='col col-sm-11 col-lg-3 p-1'>
+                            <select className='form-select' onChange={handleChange}>
+                                {blocs && blocs.map((item,index) => (
+                                    <option key={index} value={item._id}>{item.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div className='row w-100 text-center'>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap : "10px"}}>
+                    {availableSalles && availableSalles.map((salle,index) => (
+                            <Card className={salle.isBooked ? "bg-danger" : "bg-success"}>
+                                <div style={{ minHeight:"100px", display : "grid", placeItems : "center", fontWeight : "bolder", cursor : "pointer"}} className='text-light'>
+                                    {salle.salle.name}
+                                </div>
+                            </Card>
+                    ))}
+                    </div>
+                </div>
                 <div className='row'>
                     <div className='col col-sm-11 col-lg-6'>
                         {data && (
-                            <MyChart Chart={Bar} height={400} width={600} data={data} label={"Occupations per Bloc"} dataOptions={defaultDataOptions} options={getDefaultOptions} />
+                            <MyChart Chart={Bar} height={400} width={600} data={data} label={"Today's Occupations per Bloc"} dataOptions={defaultDataOptions} options={getDefaultOptions} />
                         )}
                     </div>
                     <div className='col col-sm-11 col-lg-6'>
@@ -210,34 +243,13 @@ function Home() {
                                 <MyChart Chart={Bar} height={400} width={600} data={data3} label={"Occupations per Bloc"} dataOptions={defaultDataOptions} options={getDefaultOptions} />
                             )}
                     </div>
-                </div>
-                <div className="row">
-                    <h4 className='text text-center text-primary'>Available Salles Per Bloc</h4>
-                </div>
-                <div id="available">
-                    <div className='row m-1'>
-                        <div className='col col-sm-11 col-lg-3 p-1'>
-                            Choose the bloc :
-                        </div>
-                        <div className='col col-sm-11 col-lg-3 p-1'>
-                            <select className='form-select' onChange={handleChange}>
-                                <option value={""}>Select a bloc</option>
-                                {blocs && blocs.map((item,index) => (
-                                    <option key={index} value={item._id}>{item.name}</option>
-                                ))}
-                            </select>
-                        </div>
+                    <div className="col col-sm-11 col-lg-6 custom-class">
+                        {data7 && (
+                                <MyChart Chart={Bar} height={400} width={600} data={data7} label={"Most Occupied Salles"} dataOptions={defaultDataOptions} options={getDefaultOptions} />
+                            )}
                     </div>
                 </div>
-                <div className='row w-100 text-center'>
-                    {availableSalles && availableSalles.map((salle,index) => (
-                        <div className='col col-sm-3 col-lg-1 p-1'>
-                            <button className={salle.isBooked ? "btn btn-danger" : "btn btn-success"}>
-                                {salle.salle.name}
-                            </button>
-                        </div>
-                    ))}
-                </div>
+                
             </Container>
         </>
     )
