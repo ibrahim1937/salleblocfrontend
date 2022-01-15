@@ -72,12 +72,12 @@ function QrCodePage() {
                     y1 = 50;
                     index = 1;
                     doc.addPage();
-                    doc.addImage(`http://api.qrserver.com/v1/create-qr-code/?data=${salles[i].salle._id}&size=${size}x${size}&bgcolor=${bgColor}`, "PNG",0,(y - 100),100,100);
+                    doc.addImage(`https://api.qrserver.com/v1/create-qr-code/?data=${salles[i].salle._id}&size=${size}x${size}&bgcolor=${bgColor}`, "PNG",0,(y - 100),100,100);
                     doc.text(150, y1 , salles[i].salle.name)
                     
                 }else{
                     index = index +1
-                    doc.addImage(`http://api.qrserver.com/v1/create-qr-code/?data=${salles[i].salle._id}&size=${size}x${size}&bgcolor=${bgColor}`, "PNG",0,(y - 100),100,100);
+                    doc.addImage(`https://api.qrserver.com/v1/create-qr-code/?data=${salles[i].salle._id}&size=${size}x${size}&bgcolor=${bgColor}`, "PNG",0,(y - 100),100,100);
                     doc.text(150, y1 , salles[i].salle.name)
                 }
                 
@@ -99,7 +99,7 @@ function QrCodePage() {
     
     useEffect(() => {
         setQrCode
-     (`http://api.qrserver.com/v1/create-qr-code/?data=${word}&size=${size}x${size}&bgcolor=${bgColor}`);
+     (`https://api.qrserver.com/v1/create-qr-code/?data=${word}&size=${size}x${size}&bgcolor=${bgColor}`);
       }, [word, size, bgColor]);
 
     return (
